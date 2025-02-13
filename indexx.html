@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Valentine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe6e6, #ffb3b3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Teddy Bear Animation Styles */
+        .teddy-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .teddy {
+            position: absolute;
+            font-size: 2.5rem;
+            animation: float-teddy 15s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes float-teddy {
+            0% {
+                transform: translate(0, 110vh) rotate(0deg);
+            }
+            100% {
+                transform: translate(0, -10vh) rotate(360deg);
+            }
+        }
+
+        .page {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            margin: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        h1 {
+            color: #ff4d4d;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #ff8080;
+            color: white;
+        }
+
+        .heart {
+            color: #ff4d4d;
+            font-size: 2rem;
+            margin: 1rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        #responseDisplay {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: none;
+            z-index: 2;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Teddy Bear Background -->
+    <div class="teddy-container">
+        <div class="teddy" style="left: 10%; animation-delay: 0s;">🧸</div>
+        <div class="teddy" style="left: 25%; animation-delay: -5s;">🧸</div>
+        <div class="teddy" style="left: 40%; animation-delay: -2s;">🧸</div>
+        <div class="teddy" style="left: 60%; animation-delay: -7s;">🧸</div>
+        <div class="teddy" style="left: 75%; animation-delay: -4s;">🧸</div>
+        <div class="teddy" style="left: 90%; animation-delay: -1s;">🧸</div>
+    </div>
+
+    <!-- First Page -->
+    <div class="page active" id="page1">
+        <div class="heart">❤️</div>
+        <h1>To My Beautiful Love</h1>
+        <p>Your radiant smile lights up my world every single day. You're not just beautiful on the outside, but your heart shines even brighter. Congratulations on your newly launched business, Bubbly Canvas. I am so happy to watch you grow in steps. Your creativity and determination are truly inspiring.</p>
+        <button class="btn btn-primary" onclick="showPage('page2')">Click Here</button>
+    </div>
+
+    <!-- Second Page -->
+    <div class="page" id="page2">
+        <div class="heart">❤️</div>
+        <h1>Will You Be My Valentine?</h1>
+        <p>Every moment with you is a gift, and I'd be honored to make this Valentine's Day special with you.</p>
+        <button class="btn btn-primary" onclick="handleResponse(true)">Yes</button>
+        <button class="btn btn-secondary" onclick="handleResponse(false)">No</button>
+    </div>
+
+    <!-- Success Page -->
+    <div class="page" id="page3">
+        <div class="heart">❤️</div>
+        <h1>Thank You, My Love!</h1>
+        <p>You've made me the happiest person in the world! I promise to make this Valentine's Day unforgettable. Your love means everything to me, and I can't wait to shower you with all the love and affection you deserve.</p>
+    </div>
+
+    <!-- Rejection Page -->
+    <div class="page" id="page4">
+        <div class="heart">💔</div>
+        <h1>Thank You for Your Honesty</h1>
+        <p>While it's unfortunate, I respect your decision. Your happiness means the world to me, and I appreciate you being truthful. I'll always cherish our moments together.</p>
+    </div>
+
+    <!-- Response Display -->
+    <div id="responseDisplay"></div>
+
+    <script>
+        // Replace with your actual backend URL when deployed
+        const API_URL = 'https://val-backend-7v0c.onrender.com';
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        async function handleResponse(accepted) {
+            try {
+                // Send response to backend
+                const response = await fetch(`${API_URL}/api/response`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ accepted })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save response');
+                }
+
+                const data = await response.json();
+                
+                // Show appropriate page
+                showPage(accepted ? 'page3' : 'page4');
+                
+                // Display response confirmation
+                const responseDisplay = document.getElementById('responseDisplay');
+                responseDisplay.textContent = `Response recorded: ${accepted ? 'Yes' : 'No'} at ${new Date().toLocaleString()}`;
+                responseDisplay.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                // Still show the appropriate page even if saving fails
+                showPage(accepted ? 'page3' : 'page4');
+                
+                // Show error message
+                const responseDisplay = document.getElementById('responseDisplay');
+                responseDisplay.innerHTML = `Response recorded locally: ${accepted ? 'Yes' : 'No'}<br>
+                    <span class="error-message">Note: Could not save to server</span>`;
+                responseDisplay.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
