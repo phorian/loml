@@ -1,0 +1,11 @@
+{
+    "name": "valentine-frontend",
+    "version": "1.0.0",
+    "description": "Valentine's proposal website frontend",
+    "scripts": {
+      "start": "serve public"
+    },
+    "dependencies": {
+      "serve": "^14.2.1"
+    }
+  }
